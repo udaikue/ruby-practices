@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'shot'
+
 class Bonus
   def initialize(input_ary)
     @input_ary = input_ary.map do |shot|

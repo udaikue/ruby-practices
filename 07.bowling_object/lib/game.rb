@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require_relative 'frame'
+require_relative 'bonus'
+
 class Game
   def initialize(input)
     @input = input.gsub('X', 'X0').chars

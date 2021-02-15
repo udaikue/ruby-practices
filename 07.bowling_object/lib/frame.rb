@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'shot'
+
 class Frame
   def initialize(shots)
     @shot_sum = 0
