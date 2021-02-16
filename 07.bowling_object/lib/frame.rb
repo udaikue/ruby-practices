@@ -4,14 +4,14 @@ require_relative 'shot'
 
 class Frame
   def initialize(shots)
-    @shot_sum = 0
-    shots.map do |shot|
-      @shot = Shot.new(shot)
-      @shot_sum += @shot.score
+    @pins_per_frame = 0
+    shots.each do |mark|
+      shot = Shot.new(mark)
+      @pins_per_frame += shot.mark
     end
   end
 
   def score
-    @shot_sum
+    @pins_per_frame
   end
 end

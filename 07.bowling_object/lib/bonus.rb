@@ -3,35 +3,49 @@
 require_relative 'shot'
 
 class Bonus
-  def initialize(input_ary)
-    @input_ary = input_ary.map do |shot|
-      @shot = Shot.new(shot)
-      @shot.score
+  def initialize(input)
+    input_ary = input.map do |mark|
+      shot = Shot.new(mark)
+      shot.mark
     end
 
-    @score_ary = []
-    @input_ary.each_slice(2) do |frame|
-      @score_ary << frame
-    end
+    @score_ary = input_ary.each_slice(2).to_a
   end
 
-  def calc_strike_and_spare_bonus
+  def strike_and_spare_bonus
     @strike_and_spare_bonus = 0
     @score_ary.each_with_index do |frame, i|
-      @strike_and_spare_bonus += (@score_ary[i - 1][0] != 10 ? frame[0] : frame.sum) if @score_ary[i - 1].sum == 10 && ((i != 0) && (i != 10) && (i != 11))
+      next if i.zero?
+      break if i == 10
+
+      @strike_and_spare_bonus += frame.sum if strike(i)
+      @strike_and_spare_bonus += frame[0] if spare(i)
     end
     @strike_and_spare_bonus
   end
 
-  def calc_double_strike_bonus
+  def double_strike_bonus
     @double_strike_bonus = 0
     @score_ary.each_with_index do |frame, i|
-      @double_strike_bonus += frame[0] if (@score_ary[i - 2][0] == 10 && @score_ary[i - 1][0] == 10) && ((i != 0) && (i != 1) && (i != 11))
+      next if i <= 1
+      break if i == 11
+
+      @double_strike_bonus += frame[0] if double_strike(i)
     end
     @double_strike_bonus
   end
 
-  def score
-    calc_strike_and_spare_bonus + calc_double_strike_bonus
+  private
+
+  def strike(index)
+    @score_ary[index - 1][0] == 10
+  end
+
+  def spare(index)
+    @score_ary[index - 1].sum == 10 && @score_ary[index - 1][0] != 10
+  end
+
+  def double_strike(index)
+    @score_ary[index - 2][0] == 10 && @score_ary[index - 1][0] == 10
   end
 end
