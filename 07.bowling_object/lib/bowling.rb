@@ -5,5 +5,4 @@
 require_relative 'game'
 
 input = ARGV[0]
-game = Game.new(input)
-puts game.score
+puts Game.new(input).total_score
