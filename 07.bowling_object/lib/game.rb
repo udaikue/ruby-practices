@@ -5,15 +5,15 @@ require_relative 'bonus'
 
 class Game
   def initialize(input)
-    @input = input.gsub('X', 'X0').chars
-    @pins_all_frame =
-      @input.each_slice(2).sum do |shots|
-        Frame.new(shots).pins_per_frame
+    @pins = input.gsub('X', 'X0').chars
+    @shots_all_frame =
+      @pins.each_slice(2).sum do |pins|
+        Frame.new(pins).shots_per_frame
       end
-    @bonus = Bonus.new(@input)
+    @bonus = Bonus.new(@pins)
   end
 
-  def total_score
-    @pins_all_frame + @bonus.total_bonus
+  def score
+    @shots_all_frame + @bonus.total_bonus
   end
 end

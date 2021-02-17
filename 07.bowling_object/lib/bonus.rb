@@ -3,12 +3,9 @@
 require_relative 'shot'
 
 class Bonus
-  def initialize(input)
-    input_ary = input.map do |mark|
-      Shot.new(mark).pins
-    end
-
-    @score_ary = input_ary.each_slice(2).to_a
+  def initialize(pins)
+    shots_ary = pins.map { |pin| Shot.new(pin).shot }
+    @frame_ary = shots_ary.each_slice(2).to_a
   end
 
   def total_bonus
@@ -19,7 +16,7 @@ class Bonus
 
   def strike_and_spare_bonus
     strike_and_spare_bonus = 0
-    @score_ary.each_with_index do |frame, i|
+    @frame_ary.each_with_index do |frame, i|
       next if i.zero?
       break if i == 10
 
@@ -31,7 +28,7 @@ class Bonus
 
   def double_strike_bonus
     double_strike_bonus = 0
-    @score_ary.each_with_index do |frame, i|
+    @frame_ary.each_with_index do |frame, i|
       next if i <= 1
       break if i == 11
 
@@ -41,14 +38,14 @@ class Bonus
   end
 
   def strike?(index)
-    @score_ary[index - 1][0] == 10
+    @frame_ary[index - 1][0] == 10
   end
 
   def spare?(index)
-    @score_ary[index - 1].sum == 10 && @score_ary[index - 1][0] != 10
+    @frame_ary[index - 1].sum == 10 && @frame_ary[index - 1][0] != 10
   end
 
   def double_strike?(index)
-    @score_ary[index - 2][0] == 10 && @score_ary[index - 1][0] == 10
+    @frame_ary[index - 2][0] == 10 && @frame_ary[index - 1][0] == 10
   end
 end

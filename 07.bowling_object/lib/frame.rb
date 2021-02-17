@@ -3,12 +3,12 @@
 require_relative 'shot'
 
 class Frame
-  attr_reader :pins_per_frame
+  attr_reader :shots_per_frame
 
-  def initialize(shots)
-    @pins_per_frame =
-      shots.sum do |mark|
-        Shot.new(mark).pins
+  def initialize(pins)
+    @shots_per_frame =
+      pins.sum do |pin|
+        Shot.new(pin).shot
       end
   end
 end
