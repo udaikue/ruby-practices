@@ -6,9 +6,6 @@ class Frame
   attr_reader :shots_per_frame
 
   def initialize(pins)
-    @shots_per_frame =
-      pins.sum do |pin|
-        Shot.new(pin).shot
-      end
+    @shots_per_frame = pins.sum { |pin| Shot.new(pin).shot }
   end
 end
