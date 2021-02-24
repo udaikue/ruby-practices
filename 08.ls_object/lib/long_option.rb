@@ -12,7 +12,7 @@ class LongOption
     filenames.map do |filename|
       @file_attribute = FileAttribute.new(filename)
       @total_blocks += @file_attribute.blocks
-      @all_attributes << @file_attribute.fetch_file_attribute(filename)
+      @all_attributes.push(@file_attribute.fetch_file_attribute(filename))
     end
   end
 
