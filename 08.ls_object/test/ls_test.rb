@@ -15,9 +15,9 @@ class LsTest < Minitest::Test
 
   def test_l_option
     my_ls_l = LongOption.new(Dir.glob('*').sort)
-    assert_includes `ls -l`, my_ls_l.file_attribute.output_total_blocks
+    assert_includes `ls -l`, my_ls_l.total_blocks.to_s
 
-    my_ls_l.file_attribute.all_attributes.each do |line|
+    my_ls_l.all_attributes.each do |line|
       assert_includes `ls -l`.gsub(' ', ''), line.gsub(' ', '')
     end
   end
@@ -36,9 +36,9 @@ class LsTest < Minitest::Test
 
   def test_alr_option
     my_ls_alr = LongOption.new(Dir.glob('*', File::FNM_DOTMATCH).sort.reverse!)
-    assert_includes `ls -alr`, my_ls_alr.file_attribute.output_total_blocks
+    assert_includes `ls -alr`, my_ls_alr.total_blocks.to_s
 
-    my_ls_alr.file_attribute.all_attributes.each do |line|
+    my_ls_alr.all_attributes.each do |line|
       assert_includes `ls -alr`.gsub(' ', ''), line.gsub(' ', '')
     end
   end

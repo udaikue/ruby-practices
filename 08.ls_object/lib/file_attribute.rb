@@ -3,20 +3,19 @@
 require 'etc'
 
 class FileAttribute
-  attr_reader :all_attributes
-
-  def initialize
-    @total_blocks = 0
-    @all_attributes = []
+  def initialize(filename)
+    @filename = filename
+    @attributes = []
+    @fstat = File::Stat.new(filename)
   end
 
-  def add_blocks(fstat)
-    @total_blocks += fstat.blocks
+  def blocks
+    link_file? ? 0 : @fstat.blocks
   end
 
-  def convert_ftype(file_name)
+  def fetch_file_attribute(filename)
     @attributes <<
-      case File.ftype(file_name)
+      case File.ftype(filename)
       when 'directory'
         'd'
       when 'file'
@@ -26,10 +25,9 @@ class FileAttribute
       else
         ' '
       end
-  end
 
-  def convert_permission(fstat)
-    file_mode = fstat.mode
+    file_mode =
+      link_file? ? File.lstat(filename).mode : @fstat.mode
     format = format('0%<file_mode>o', file_mode: file_mode)
     permission = format.slice(-3..-1)
     @attributes << permission.gsub(
@@ -42,45 +40,23 @@ class FileAttribute
       '2' => '-w-',
       '1' => '--x'
     )
+
+    @attributes.push " #{@fstat.nlink.to_s.rjust(2)}  #{Etc.getpwuid(@fstat.uid).name}  #{Etc.getgrgid(@fstat.gid).name}"
+
+    @fstat = File.readlink(filename) if link_file?
+    @attributes.push(@fstat.size.to_s.rjust(7))
+
+    @fstat = File.lstat(filename) if link_file?
+    @attributes.push " #{@fstat.mtime.strftime('%-m').to_s.rjust(2)} #{@fstat.mtime.strftime('%e').to_s.rjust(2)} #{@fstat.mtime.strftime('%R')}"
+
+    @attributes.push " #{filename}"
+    @attributes << " -> #{File.readlink(filename)}" if link_file?
+    @attributes.join
   end
 
-  def fetch_number_of_links(fstat)
-    @attributes.push " #{fstat.nlink.to_s.rjust(2)}"
-  end
+  private
 
-  def convert_user_name(fstat)
-    @attributes.push " #{Etc.getpwuid(fstat.uid).name}"
-  end
-
-  def convert_group_name(fstat)
-    @attributes.push " #{Etc.getgrgid(fstat.gid).name}"
-  end
-
-  def fetch_byte(fstat)
-    @attributes.push(fstat.size.to_s.rjust(7))
-  end
-
-  def fetch_update_time(fstat)
-    @attributes.push " #{fstat.mtime.strftime('%-m').to_s.rjust(2)} #{fstat.mtime.strftime('%e').to_s.rjust(2)} #{fstat.mtime.strftime('%R')}"
-  end
-
-  def fetch_filename(file_name)
-    @attributes.push " #{file_name}"
-  end
-
-  def link_to(file_name)
-    @attributes << " -> #{File.readlink(file_name)}"
-  end
-
-  def output_total_blocks
-    "total #{@total_blocks}"
-  end
-
-  def join_attribute
-    @all_attributes << @attributes.join
-  end
-
-  def reset_attribute
-    @attributes = []
+  def link_file?
+    File.ftype(@filename) == 'link'
   end
 end
