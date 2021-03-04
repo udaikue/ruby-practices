@@ -10,7 +10,7 @@ class ArgumentInput
 
   def initialize(argument_files, l_option)
     @argument_files = argument_files
-    @l_option = l_option['l']
+    @l_option = l_option
     @output_list = []
     @total_lines = 0
     @total_words = 0
