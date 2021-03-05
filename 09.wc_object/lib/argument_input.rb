@@ -34,7 +34,7 @@ class ArgumentInput
 
   def output
     puts @output_list.join
-    puts TotalLine.new(@total_lines, @total_words, @total_bytes, @l_option).output.join if multiple_files?
+    puts TotalLine.new(@total_lines, @total_words, @total_bytes, @l_option).output if multiple_files?
   end
 
   private

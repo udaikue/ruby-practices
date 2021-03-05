@@ -10,6 +10,6 @@ class TotalLine
   end
 
   def output
-    @output_total.push(' total')
+    @output_total.push(' total').join
   end
 end
